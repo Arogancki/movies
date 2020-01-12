@@ -1,16 +1,14 @@
 process.env.NODE_ENV = "test";
 
-const app = require("../app"),
+const App = require("../app"),
     mongoose = require("mongoose"),
     agent = require("supertest").agent,
     appConfig = require("../config"),
     MoviesProvider = require("../Modules/movies/Provider"),
     MoviesRepository = require("../Modules/movies/Repository"),
     CommentsRepository = require("../Modules/comments/Repository"),
-    GenresRepository = require("../Modules/movies/genres/Repository"),
-    PeopleRepository = require("../Modules/movies/people/Repository"),
-    should = require("should"),
-    config = {};
+    DependencyContainer = require("../common/DependencyContainer");
+(should = require("should")), (config = {});
 
 function ensureConnection() {
     return new Promise(res => {
@@ -40,16 +38,16 @@ function areMoviesEqual(fromApi, fromDB) {
 }
 
 describe("Testing service", () => {
-    const moviesProvider = new MoviesProvider();
-    const moviesRepository = new MoviesRepository();
-    const commentsRepository = new CommentsRepository();
-    const genresRepository = new GenresRepository();
-    const peopleRepository = new PeopleRepository();
+    const diContainer = DependencyContainer.getInstance();
+    const moviesProvider = diContainer.resolve("moviesProvider");
+    const moviesRepository = diContainer.resolve("moviesRepository");
+    const commentsRepository = diContainer.resolve("commentsRepository");
 
     before(async () => {
         await ensureConnection();
         await cleanDatabase();
-        const express = await app();
+        const diContainer = DependencyContainer.getInstance();
+        const express = await new App(diContainer.cradle).getApp();
         config.server = express.server;
         config.app = express.app;
     });
@@ -234,6 +232,6 @@ describe("Testing service", () => {
 
     after(async () => {
         await cleanDatabase();
-        config.server.close();
+        config.server && config.server.close();
     });
 });

@@ -1,8 +1,13 @@
 const MovieFacade = require("./Facade");
 
 module.exports = class MoviesService {
-    constructor(options) {
-        Object.assign(this, options);
+    constructor({ peopleService, genresService, moviesRepository, moviesProvider }) {
+        Object.assign(this, {
+            provider: moviesProvider,
+            repository: moviesRepository,
+            genresService: genresService,
+            peopleService: peopleService,
+        });
     }
 
     async get(query) {

@@ -1,5 +1,5 @@
-const BaseRepository = require("../../../common/BaseRepository"),
-    config = require("../../../config"),
+const BaseRepository = require("../../common/BaseRepository"),
+    config = require("../../config"),
     Schema = require("./Schema");
 
 module.exports = class PeopleRepository extends BaseRepository {

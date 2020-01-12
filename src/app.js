@@ -4,23 +4,24 @@ const express = require("express"),
     middlewares = require("./middlewares"),
     router = require("./router"),
     app = express(),
-    log = require("./helpers/log"),
-    MoviesModule = require("./modules/movies/Module"),
-    CommentsModule = require("./modules/comments/Module");
+    log = require("./helpers/log");
 
-module.exports = async function appBootstrap() {
-    app.set("port", config.PORT);
+module.exports = class App {
+    constructor({ moviesRouter, commentsRouter }) {
+        this.commentsRouter = commentsRouter;
+        this.moviesRouter = moviesRouter;
+    }
+    async getApp() {
+        app.set("port", config.PORT);
 
-    await middlewares(app);
+        await middlewares(app);
 
-    const moviesModule = new MoviesModule();
-    const commentsModule = new CommentsModule(moviesModule.service);
+        await router(app, [this.moviesRouter, this.commentsRouter]);
 
-    await router(app, [moviesModule.router, commentsModule.router]);
+        config.PRINT_CONFIG && Object.keys(config).forEach(key => log.debug(`$${key}=${config[key]}`));
 
-    config.PRINT_CONFIG && Object.keys(config).forEach(key => log.debug(`$${key}=${config[key]}`));
-
-    return new Promise(async res => {
-        const server = http.createServer(app).listen(app.get("port"), () => res({ server, app }));
-    });
+        return new Promise(async res => {
+            const server = http.createServer(app).listen(app.get("port"), () => res({ server, app: app }));
+        });
+    }
 };

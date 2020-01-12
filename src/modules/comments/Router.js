@@ -3,7 +3,7 @@ const Router = require("../../common/Router"),
     schemes = require("../../validators/schemes");
 
 module.exports = class CommentsRouter {
-    constructor(service) {
+    constructor({ commentsService: service }) {
         this.path = "/comments";
         this.router = new Router([
             {

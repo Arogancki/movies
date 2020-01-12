@@ -2,12 +2,15 @@ const NotFoundError = require("../../common/NotFoundError");
 const CommentsFacade = require("./Facade");
 
 module.exports = class CommentsService {
-    constructor(options) {
-        Object.assign(this, options);
+    constructor({ moviesService, commentsRepository }) {
+        Object.assign(this, {
+            moviesService,
+            repository: commentsRepository,
+        });
     }
 
     async _getMovie(query) {
-        const [movie] = await this.movieService.get(query);
+        const [movie] = await this.moviesService.get(query);
         if (!movie) {
             throw new NotFoundError();
         }

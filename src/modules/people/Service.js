@@ -1,6 +1,6 @@
 module.exports = class PeopleService {
-    constructor(config) {
-        Object.assign(this, config);
+    constructor({ peopleRepository }) {
+        this.repository = peopleRepository;
     }
     getId(name) {
         return this.repository.getId(name);

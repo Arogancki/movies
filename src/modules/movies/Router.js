@@ -3,7 +3,7 @@ const Router = require("../../common/Router"),
     schemes = require("../../validators/schemes");
 
 module.exports = class MoviesRouter {
-    constructor(service) {
+    constructor({ moviesService: service }) {
         this.path = "/movies";
         this.router = new Router([
             {
